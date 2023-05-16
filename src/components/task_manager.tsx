@@ -17,9 +17,9 @@ const TASKS: TaskType[] = [
 const TaskManager: FC = () => {
   const [tasks, setTasks] = useState(TASKS)
 
-  const handleTaskDeleteClick = (deletedTask: TaskType) => () => {
-    if (confirm(`Are you sure that you want to delete task '${deletedTask.title}'?`))
-      setTasks(tasks.filter(task => task !== deletedTask))
+  const handleTaskDeleteClick = (deletedTask: TaskType) => (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (confirm(`Are you sure you want to delete task '${deletedTask.title}'?`))
+      setTasks(previousTasks => previousTasks.filter(task => task !== deletedTask))
   }
 
   return (
