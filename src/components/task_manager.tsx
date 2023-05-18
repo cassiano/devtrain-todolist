@@ -22,6 +22,14 @@ const TaskManager: FC = () => {
       setTasks(previousTasks => previousTasks.filter(task => task !== deletedTask))
   }
 
+  const handleTaskUpdateStatusChange = (updatedTask: TaskType) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const done = e.target.checked
+
+    setTasks(previousTasks => previousTasks.map(task => (task === updatedTask ? { ...task, done } : task)))
+  }
+
+  const activeTasks = tasks.filter(task => !task.done)
+
   return (
     <>
       <section className='todoapp'>
@@ -37,7 +45,12 @@ const TaskManager: FC = () => {
             {tasks.map(task => (
               <li className={classNames({ completed: task.done })}>
                 <div className='view'>
-                  <input className='toggle' type='checkbox' checked={task.done} />
+                  <input
+                    className='toggle'
+                    type='checkbox'
+                    checked={task.done}
+                    onChange={handleTaskUpdateStatusChange(task)}
+                  />
                   <label>{task.title}</label>
                   <button className='destroy' onClick={handleTaskDeleteClick(task)}></button>
                 </div>
@@ -49,7 +62,7 @@ const TaskManager: FC = () => {
 
         <footer className='footer'>
           <span className='todo-count'>
-            <strong>0</strong> item left
+            <strong>{activeTasks.length}</strong> item{activeTasks.length !== 1 && 's'} left
           </span>
           <ul className='filters'>
             <li>
