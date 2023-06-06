@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import classNames from 'classnames'
 
 type TaskType = {
@@ -16,7 +16,11 @@ const TASKS: TaskType[] = [
 
 const TaskManager: FC = () => {
   const [tasks, setTasks] = useState(TASKS)
+  // const [newTaskTitle, setNewTaskTitle] = useState('')
 
+  const newTaskTitleRef = useRef<HTMLInputElement>(null)
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleTaskDeleteClick = (deletedTask: TaskType) => (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (confirm(`Are you sure you want to delete task '${deletedTask.title}'?`))
       setTasks(previousTasks => previousTasks.filter(task => task !== deletedTask))
@@ -30,12 +34,37 @@ const TaskManager: FC = () => {
 
   const activeTasks = tasks.filter(task => !task.done)
 
+  const handleNewTaskTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const key = e.key
+    // const title = newTaskTitle.trim()
+
+    if (newTaskTitleRef.current !== null) {
+      const input = newTaskTitleRef.current
+      const title = input.value.trim()
+
+      if (key === 'Enter' && title !== '') {
+        setTasks(previousTasks => previousTasks.concat({ id: previousTasks.length + 1, title, done: false }))
+
+        // setNewTaskTitle('')
+        input.value = ''
+      }
+    }
+  }
+
   return (
     <>
       <section className='todoapp'>
         <header className='header'>
           <h1>todos</h1>
-          <input className='new-todo' placeholder='What needs to be done?' autoFocus />
+          <input
+            className='new-todo'
+            placeholder='What needs to be done?'
+            autoFocus
+            // value={newTaskTitle}
+            // onChange={e => setNewTaskTitle(e.target.value)}
+            ref={newTaskTitleRef}
+            onKeyDown={handleNewTaskTitleKeyDown}
+          />
         </header>
 
         <section className='main'>
