@@ -16,9 +16,7 @@ const TASKS: TaskType[] = [
 
 const TaskManager: FC = () => {
   const [tasks, setTasks] = useState(TASKS)
-  // const [newTaskTitle, setNewTaskTitle] = useState('')
-
-  const newTaskTitleRef = useRef<HTMLInputElement>(null)
+  const [newTaskTitle, setNewTaskTitle] = useState('')
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleTaskDeleteClick = (deletedTask: TaskType) => (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -36,18 +34,12 @@ const TaskManager: FC = () => {
 
   const handleNewTaskTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const key = e.key
-    // const title = newTaskTitle.trim()
+    const title = newTaskTitle.trim()
 
-    if (newTaskTitleRef.current !== null) {
-      const input = newTaskTitleRef.current
-      const title = input.value.trim()
+    if (key === 'Enter' && title !== '') {
+      setTasks(previousTasks => previousTasks.concat({ id: previousTasks.length + 1, title, done: false }))
 
-      if (key === 'Enter' && title !== '') {
-        setTasks(previousTasks => previousTasks.concat({ id: previousTasks.length + 1, title, done: false }))
-
-        // setNewTaskTitle('')
-        input.value = ''
-      }
+      setNewTaskTitle('')
     }
   }
 
@@ -60,9 +52,8 @@ const TaskManager: FC = () => {
             className='new-todo'
             placeholder='What needs to be done?'
             autoFocus
-            // value={newTaskTitle}
-            // onChange={e => setNewTaskTitle(e.target.value)}
-            ref={newTaskTitleRef}
+            value={newTaskTitle}
+            onChange={e => setNewTaskTitle(e.target.value)}
             onKeyDown={handleNewTaskTitleKeyDown}
           />
         </header>
