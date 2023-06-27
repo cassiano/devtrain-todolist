@@ -1,7 +1,8 @@
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
+import { listTasksApi } from '../services/api'
 
-type TaskType = {
+export type TaskType = {
   id: number
   title: string
   done: boolean
@@ -9,20 +10,19 @@ type TaskType = {
 
 type FilterType = 'all' | 'active' | 'completed'
 
-// Mocked data.
-const TASKS: TaskType[] = [
-  { id: 1, title: 'A', done: true },
-  { id: 2, title: 'B', done: false },
-  { id: 3, title: 'C', done: true },
-]
-
 const TaskManager: FC = () => {
-  const [tasks, setTasks] = useState(TASKS)
+  const [tasks, setTasks] = useState<TaskType[]>([])
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [taskBeingEditedId, setTaskBeingEditedId] = useState<TaskType['id'] | null>(null)
   const [filter, setFilter] = useState<FilterType>('all')
 
   const taskTitlesRef = useRef<{ [index: TaskType['id']]: HTMLInputElement }>({})
+
+  useEffect(() => {
+    listTasksApi().then(response => {
+      setTasks(response.data)
+    })
+  }, [])
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleTaskDeleteClick = (deletedTask: TaskType) => (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
